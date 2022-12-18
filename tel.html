@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            font-size: 62.5%;
+        }
+        
+        body {
+            font-family: 'Poppins', 'Montserrat', sans-serif;
+            background-color: rgb(199, 199, 223);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .container {
+            width: 30rem;
+        }
+        
+        .heading {
+            color: #000;
+            text-align: center;
+            text-shadow: 2px 1px #848484;
+            font-size: 4rem;
+            font-weight: 600;
+        }
+        
+        .music-container {
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.4);
+            padding: 1rem 2rem;
+            margin-top: 7rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #cover-box {
+            border-radius: 1rem;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.4);
+            position: relative;
+            bottom: 4rem;
+            width: 85%;
+        }
+        
+        #cover {
+            border-radius: inherit;
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+        
+        #music-box {
+            width: 100%;
+        }
+        
+        #music-info {
+            text-align: center;
+            width: 100%;
+            position: relative;
+            bottom: 2rem;
+        }
+        
+        #title {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        #artist {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+        
+        #progress-container {
+            height: 4px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            margin: 2rem 0 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        #progress {
+            background-color: #000;
+            width: 0%;
+            height: inherit;
+            border-radius: inherit;
+            transition: width 100ms ease-in;
+        }
+        
+        #timer-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.4rem;
+        }
+        
+        #control-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-size: 1.6rem;
+            padding: 1rem;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            border-radius: 4rem;
+            color: #a0a0a0;
+            transition: background 200ms linear, color 200ms linear;
+        }
+        
+        .special-btn {
+            background-color: #000;
+            color: #fff;
+            font-size: 2.2rem;
+            margin: 0 1rem;
+            padding: 1.4rem;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            border-radius: 4rem;
+            transition: opacity 200ms linear;
+        }
+        
+        @media (hover: hover) {
+            .btn:hover {
+                background-color: #d8d8d8;
+                color: #545454;
+            }
+            .special-btn:hover {
+                opacity: 0.75;
+            }
+        }
+    </style>
+    <title>TELUGU SONGS</title>
+</head>
+
+<body style="background-image: url(radio.gif);">
+    <div class="container">
+        <h1 class="heading">TELUGU SONGS</h1>
+        <div class="music-container" style="background-color: aqua;">
+            <div id="cover-box">
+                <img src="cover1.jpg" alt="cover-img" id="cover" />
+            </div>
+            <div id="music-box">
+                <audio id="disc"></audio>
+                <div id="music-info">
+                    <h2 id="title"></h2>
+                    <h3 id="artist"></h3>
+                    <div id="progress-container">
+                        <div id="progress"></div>
+                    </div>
+                    <div id="timer-bar">
+                        <span id="timer">0:00</span>
+                        <span id="duration"></span>
+                    </div>
+                </div>
+                <div id="control-box">
+                    <i id="prev" class="btn fas fa-backward"></i>
+                    <i id="play" class="special-btn fas fa-play"></i>
+                    <i id="next" class="btn fas fa-forward"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const cover = document.getElementById('cover');
+        const disc = document.getElementById('disc');
+        const title = document.getElementById('title');
+        const artist = document.getElementById('artist');
+        const progressContainer = document.getElementById('progress-container');
+        const progress = document.getElementById('progress');
+        const timer = document.getElementById('timer');
+        const duration = document.getElementById('duration');
+        const prev = document.getElementById('prev');
+        const play = document.getElementById('play');
+        const next = document.getElementById('next');
+        let songIndex = 0;
+
+        // Songs info
+        const songs = [{
+            title: 'DJ TILLU',
+            artist: 'Ram Miryala',
+            coverPath: 'cover1.jpg',
+            discPath: 'djtillu.mp3',
+            duration: '03:05',
+        }, {
+            title: 'INTHANDAM',
+            artist: 'S.P.B. Charan',
+            coverPath: 'cover2.jpg',
+            discPath: 'inthandham.mp3',
+            duration: '03:38',
+        }, {
+            title: 'NAA MADHI',
+            artist: 'Anirudh Ravichander',
+            coverPath: 'cover3.jpg',
+            discPath: 'naamadhi.mp3',
+            duration: '02:54',
+        }, ];
+
+        // Load song initially
+        loadSong(songs[songIndex]);
+
+        // Load the given song
+        function loadSong(song) {
+            cover.src = song.coverPath;
+            disc.src = song.discPath;
+            title.textContent = song.title;
+            artist.textContent = song.artist;
+            duration.textContent = song.duration;
+        }
+
+        // Toggle play and pause
+        function playPauseMedia() {
+            if (disc.paused) {
+                disc.play();
+            } else {
+                disc.pause();
+            }
+        }
+
+        // Update icon
+        function updatePlayPauseIcon() {
+            if (disc.paused) {
+                play.classList.remove('fa-pause');
+                play.classList.add('fa-play');
+            } else {
+                play.classList.remove('fa-play');
+                play.classList.add('fa-pause');
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            progress.style.width = (disc.currentTime / disc.duration) * 100 + '%';
+
+            let minutes = Math.floor(disc.currentTime / 60);
+            let seconds = Math.floor(disc.currentTime % 60);
+            if (seconds < 10) {
+                seconds = '0' + seconds;
+            }
+            timer.textContent = `${minutes}:${seconds}`;
+        }
+
+        // Reset the progress
+        function resetProgress() {
+            progress.style.width = 0 + '%';
+            timer.textContent = '0:00';
+        }
+
+        // Go to previous song
+        function gotoPreviousSong() {
+            if (songIndex === 0) {
+                songIndex = songs.length - 1;
+            } else {
+                songIndex = songIndex - 1;
+            }
+
+            const isDiscPlayingNow = !disc.paused;
+            loadSong(songs[songIndex]);
+            resetProgress();
+            if (isDiscPlayingNow) {
+                playPauseMedia();
+            }
+        }
+
+        // Go to next song
+        function gotoNextSong(playImmediately) {
+            if (songIndex === songs.length - 1) {
+                songIndex = 0;
+            } else {
+                songIndex = songIndex + 1;
+            }
+
+            const isDiscPlayingNow = !disc.paused;
+            loadSong(songs[songIndex]);
+            resetProgress();
+            if (isDiscPlayingNow || playImmediately) {
+                playPauseMedia();
+            }
+        }
+
+        // Change song progress when clicked on progress bar
+        function setProgress(ev) {
+            const totalWidth = this.clientWidth;
+            const clickWidth = ev.offsetX;
+            const clickWidthRatio = clickWidth / totalWidth;
+            disc.currentTime = clickWidthRatio * disc.duration;
+        }
+
+        // Play/Pause when play button clicked
+        play.addEventListener('click', playPauseMedia);
+
+        // Various events on disc
+        disc.addEventListener('play', updatePlayPauseIcon);
+        disc.addEventListener('pause', updatePlayPauseIcon);
+        disc.addEventListener('timeupdate', updateProgress);
+        disc.addEventListener('ended', gotoNextSong.bind(null, true));
+
+        // Go to next song when next button clicked
+        prev.addEventListener('click', gotoPreviousSong);
+
+        // Go to previous song when previous button clicked
+        next.addEventListener('click', gotoNextSong.bind(null, false));
+
+        // Move to different place in the song
+        progressContainer.addEventListener('click', setProgress);
+    </script>
+</body>
+
+</html>
